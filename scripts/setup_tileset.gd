@@ -8,6 +8,30 @@ const TILESET_PATH = "res://assets/tilesets/tileset.tres"
 const TILESET_IMAGE = "res://assets/tilesets/generated/attempt3_grass_dirt.png"
 const MAIN_SCENE = "res://scenes/main.tscn"
 
+# CORRECTED Wang tile mapping based on corner analysis:
+# Bits [TL, TR, BL, BR] where 1=grass, 0=dirt
+const WANG_MAP = {
+	0b0000: Vector2i(2, 1),  # pure dirt (all corners dirt)
+	0b0001: Vector2i(3, 1),  # BR=grass
+	0b0010: Vector2i(2, 2),  # BL=grass
+	0b0011: Vector2i(1, 2),  # BL+BR=grass
+	0b0100: Vector2i(2, 0),  # TR=grass
+	0b0101: Vector2i(3, 2),  # TR+BR=grass
+	0b0110: Vector2i(0, 1),  # TR+BL=grass
+	0b0111: Vector2i(3, 3),  # TR+BL+BR=grass
+	0b1000: Vector2i(1, 1),  # TL=grass
+	0b1001: Vector2i(2, 3),  # TL+BR=grass
+	0b1010: Vector2i(1, 0),  # TL+BL=grass
+	0b1011: Vector2i(0, 2),  # TL+BL+BR=grass
+	0b1100: Vector2i(3, 0),  # TL+TR=grass
+	0b1101: Vector2i(0, 0),  # TL+TR+BR=grass
+	0b1110: Vector2i(1, 3),  # TL+TR+BL=grass
+	0b1111: Vector2i(0, 3),  # pure grass (all corners grass)
+}
+
+const PURE_DIRT = Vector2i(2, 1)
+const PURE_GRASS = Vector2i(0, 3)
+
 func _init():
 	print("Setting up TileSet and test map...")
 	setup_tileset()
@@ -16,7 +40,6 @@ func _init():
 	quit()
 
 func setup_tileset():
-	# Load the 64x64 tileset image
 	var img = Image.load_from_file(TILESET_IMAGE)
 	if not img:
 		push_error("Failed to load: " + TILESET_IMAGE)
@@ -24,24 +47,20 @@ func setup_tileset():
 	
 	var tex = ImageTexture.create_from_image(img)
 	
-	# Create TileSet
 	var tileset = TileSet.new()
 	tileset.tile_size = Vector2i(16, 16)
 	
-	# Create atlas source - 4x4 grid of 16x16 tiles
 	var atlas = TileSetAtlasSource.new()
 	atlas.texture = tex
 	atlas.texture_region_size = Vector2i(16, 16)
 	
-	# Create all 16 tiles in the atlas
+	# Create all 16 tiles
 	for row in range(4):
 		for col in range(4):
 			atlas.create_tile(Vector2i(col, row))
 	
-	# Add atlas to tileset
 	tileset.add_source(atlas, 0)
 	
-	# Save
 	var err = ResourceSaver.save(tileset, TILESET_PATH)
 	if err == OK:
 		print("✓ TileSet saved: " + TILESET_PATH)
@@ -56,13 +75,11 @@ func setup_main_scene():
 	
 	var main = packed_scene.instantiate()
 	
-	# Find Ground TileMapLayer
 	var ground = main.get_node("Ground")
 	if not ground:
 		push_error("Ground layer not found")
 		return
 	
-	# Assign TileSet
 	var tileset = load(TILESET_PATH)
 	if tileset:
 		ground.tile_set = tileset
@@ -71,66 +88,14 @@ func setup_main_scene():
 		push_error("Failed to load TileSet")
 		return
 	
-	# Paint a 20x15 map: grass center with dirt border
+	# Paint map: grass island with dirt border and smooth transitions
 	var map_w = 20
 	var map_h = 15
 	
-	# Atlas coords for key tiles:
-	# (0,0)=pure_dirt, (3,3)=pure_grass
-	# Transition tiles fill the grid
-	var pure_dirt = Vector2i(0, 0)
-	var pure_grass = Vector2i(3, 3)
-	
-	# Wang corner tile map for transitions (row, col in 4x4 atlas)
-	# We define transitions by which corners are grass (1) vs dirt (0)
-	# Bits: [TL, TR, BL, BR]
-	var transition_tiles = {
-		0b0000: Vector2i(0, 0),  # all dirt
-		0b0001: Vector2i(1, 0),  # BR grass
-		0b0010: Vector2i(2, 0),  # BL grass
-		0b0011: Vector2i(3, 0),  # BL+BR grass
-		0b0100: Vector2i(0, 1),  # TR grass
-		0b0101: Vector2i(1, 1),  # TR+BR grass
-		0b0110: Vector2i(2, 1),  # TR+BL grass
-		0b0111: Vector2i(3, 1),  # TR+BL+BR grass
-		0b1000: Vector2i(0, 2),  # TL grass
-		0b1001: Vector2i(1, 2),  # TL+BR grass
-		0b1010: Vector2i(2, 2),  # TL+BL grass
-		0b1011: Vector2i(3, 2),  # TL+BL+BR grass
-		0b1100: Vector2i(0, 3),  # TL+TR grass
-		0b1101: Vector2i(1, 3),  # TL+TR+BR grass
-		0b1110: Vector2i(2, 3),  # TL+TR+BL grass
-		0b1111: Vector2i(3, 3),  # all grass
-	}
-	
 	for x in range(map_w):
 		for y in range(map_h):
-			var is_edge = (x == 0 or x == map_w - 1 or y == 0 or y == map_h - 1)
-			var is_near_edge = (x == 1 or x == map_w - 2 or y == 1 or y == map_h - 2)
-			
-			var atlas_coords = pure_grass
-			
-			if is_edge:
-				# Outer dirt ring
-				atlas_coords = pure_dirt
-			elif is_near_edge:
-				# Transition layer - calculate corner bits based on neighbors
-				var bits = 0
-				# Top-left corner
-				if x > 1 and y > 1:
-					bits |= 0b1000
-				# Top-right corner
-				if x < map_w - 2 and y > 1:
-					bits |= 0b0100
-				# Bottom-left corner
-				if x > 1 and y < map_h - 2:
-					bits |= 0b0010
-				# Bottom-right corner
-				if x < map_w - 2 and y < map_h - 2:
-					bits |= 0b0001
-				
-				atlas_coords = transition_tiles.get(bits, pure_dirt)
-			
+			var bits = calculate_wang_bits(x, y, map_w, map_h)
+			var atlas_coords = WANG_MAP.get(bits, PURE_GRASS)
 			ground.set_cell(Vector2i(x, y), 0, atlas_coords, 0)
 	
 	print("✓ Map painted: ", map_w, "x", map_h)
@@ -161,3 +126,32 @@ func setup_main_scene():
 		push_error("Failed to pack scene")
 	
 	main.free()
+
+func calculate_wang_bits(x: int, y: int, map_w: int, map_h: int) -> int:
+	# For each corner of this tile, check if the adjacent tile should be grass
+	# A corner is grass if the tile in that diagonal direction is inner (not edge)
+	var bits = 0
+	
+	# Top-Left corner: check tile at (x-1, y-1)
+	if x > 0 and y > 0 and is_grass(x - 1, y - 1, map_w, map_h):
+		bits |= 0b1000
+	
+	# Top-Right corner: check tile at (x+1, y-1)
+	if x < map_w - 1 and y > 0 and is_grass(x + 1, y - 1, map_w, map_h):
+		bits |= 0b0100
+	
+	# Bottom-Left corner: check tile at (x-1, y+1)
+	if x > 0 and y < map_h - 1 and is_grass(x - 1, y + 1, map_w, map_h):
+		bits |= 0b0010
+	
+	# Bottom-Right corner: check tile at (x+1, y+1)
+	if x < map_w - 1 and y < map_h - 1 and is_grass(x + 1, y + 1, map_w, map_h):
+		bits |= 0b0001
+	
+	return bits
+
+func is_grass(x: int, y: int, map_w: int, map_h: int) -> bool:
+	# Inner area is grass, border is dirt
+	# Create a 2-tile wide border of dirt
+	var border = 2
+	return x >= border and x < map_w - border and y >= border and y < map_h - border
