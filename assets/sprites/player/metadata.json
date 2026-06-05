@@ -1,0 +1,32 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "e3399290-5c32-498c-90ae-fc960f578be8",
+        "name": "Hero",
+        "prompt": "hero adventurer, blue tunic, brown hair, top-down JRPG protagonist, 16-bit pixel art, flat shading, single color outline, low detail",
+        "size": {
+          "width": 68,
+          "height": 68
+        },
+        "template_id": "mannequin",
+        "directions": 4,
+        "view": "low top-down",
+        "created_at": "2026-06-05T20:47:35.042461+00:00"
+      },
+      "folder": "e3399290",
+      "frames": {
+        "rotations": {
+          "south": "e3399290/rotations/south.png",
+          "west": "e3399290/rotations/west.png",
+          "east": "e3399290/rotations/east.png",
+          "north": "e3399290/rotations/north.png"
+        },
+        "animations": {}
+      }
+    }
+  ],
+  "export_version": "3.0",
+  "export_date": "2026-06-05T20:49:46.448892"
+}
