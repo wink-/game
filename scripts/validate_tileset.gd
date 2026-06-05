@@ -19,7 +19,7 @@ func _init():
 	quit(errors.size())
 
 func parse_args():
-	var args = get_command_line_args()
+	var args = OS.get_cmdline_args()
 	for i in range(args.size()):
 		if args[i] == "--path" and i + 1 < args.size():
 			tileset_path = args[i + 1]
