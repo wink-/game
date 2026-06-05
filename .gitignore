@@ -23,9 +23,6 @@ Thumbs.db
 # User-specific
 *.log
 
-# Pixellab generated (raw outputs, keep curated)
-assets/tilesets/generated/
-
 # Local opencode config (contains API keys)
 opencode.json
 .opencode/mcp.json
