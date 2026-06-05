@@ -1,6 +1,5 @@
 #!/usr/bin/env -S godot --headless --script
-# ULTRA-SIMPLE island builder
-# Uses solid color tiles - guaranteed correct, no Wang complexity
+# Build a proper island with concentric rings
 
 extends SceneTree
 
@@ -13,22 +12,21 @@ const GRASS_SRC = 2
 const DIRT_SRC = 3
 
 func _init():
-	print("Building simple island...")
+	print("Building island...")
 	build_tileset()
 	build_island()
 	update_player()
-	print("\nDone! Run scenes/main.tscn")
+	print("\nDone!")
 	quit()
 
 func build_tileset():
 	var tileset = TileSet.new()
 	tileset.tile_size = Vector2i(16, 16)
 	
-	# 4 solid-color atlases, 1 tile each
-	add_solid_atlas(tileset, WATER_SRC, Color(0.12, 0.35, 0.7))   # Deep blue water
-	add_solid_atlas(tileset, SAND_SRC, Color(0.78, 0.72, 0.52))   # Tan sand
-	add_solid_atlas(tileset, GRASS_SRC, Color(0.25, 0.65, 0.22))  # Green grass
-	add_solid_atlas(tileset, DIRT_SRC, Color(0.55, 0.38, 0.18))   # Brown dirt
+	add_solid_atlas(tileset, WATER_SRC, Color(0.15, 0.35, 0.75))   # Deep blue water
+	add_solid_atlas(tileset, SAND_SRC, Color(0.82, 0.75, 0.55))   # Light tan sand
+	add_solid_atlas(tileset, GRASS_SRC, Color(0.3, 0.7, 0.25))    # Bright green grass
+	add_solid_atlas(tileset, DIRT_SRC, Color(0.6, 0.42, 0.22))    # Warm brown dirt
 	
 	ResourceSaver.save(tileset, "res://assets/tilesets/island.tres")
 	print("✓ TileSet saved")
@@ -47,42 +45,63 @@ func build_island():
 	var packed = load(MAIN_SCENE)
 	var main = packed.instantiate()
 	var ground = main.get_node("Ground")
+	var props = main.get_node("Props")
+	
+	# Clear old data
+	ground.clear()
+	props.clear()
 	
 	ground.tile_set = load("res://assets/tilesets/island.tres")
+	props.tile_set = load("res://assets/tilesets/island.tres")
 	
-	# Island: 24 wide x 18 tall
-	# Rings from outside in: water(3) → sand(2) → grass(5) → dirt(center)
-	var map_w = 24
-	var map_h = 18
+	# Island dimensions
+	var map_w = 30
+	var map_h = 22
+	
+	# Ring boundaries (distance from center in tiles)
+	var dirt_radius = 3      # Center dirt circle (radius 3)
+	var grass_radius = 7   # Grass extends to radius 7
+	var sand_radius = 10   # Sand extends to radius 10
+	# Everything beyond is water
+	
+	var center_x = map_w / 2.0
+	var center_y = map_h / 2.0
 	
 	for x in range(map_w):
 		for y in range(map_h):
-			var dx = abs(x - map_w / 2.0)
-			var dy = abs(y - map_h / 2.0)
-			var dist = max(dx, dy)  # 0=center, ~12=corner
+			# Euclidean distance from center
+			var dx = x - center_x
+			var dy = y - center_y
+			var dist = sqrt(dx * dx + dy * dy)
 			
 			var src = WATER_SRC
-			if dist < 3:
-				src = DIRT_SRC      # Center: dirt
-			elif dist < 8:
-				src = GRASS_SRC     # Middle: grass
-			elif dist < 10:
-				src = SAND_SRC      # Beach: sand
+			if dist < dirt_radius:
+				src = DIRT_SRC
+			elif dist < grass_radius:
+				src = GRASS_SRC
+			elif dist < sand_radius:
+				src = SAND_SRC
 			else:
-				src = WATER_SRC     # Outer: water
+				src = WATER_SRC
 			
 			ground.set_cell(Vector2i(x, y), src, Vector2i(0, 0), 0)
 	
 	print("✓ Island painted: ", map_w, "x", map_h)
 	
-	# Center player
+	# Center player on island
 	var player = main.get_node("YSort/Player")
-	player.position = Vector2(map_w * 8, map_h * 8)
+	player.position = Vector2(center_x * 16, center_y * 16)
+	print("✓ Player centered at: ", player.position)
 	
-	# Camera
+	# Camera follows player, no limits needed for now
 	var camera = player.get_node("Camera2D")
-	camera.limit_right = map_w * 16
-	camera.limit_bottom = map_h * 16
+	if camera:
+		camera.limit_left = 0
+		camera.limit_top = 0
+		camera.limit_right = map_w * 16
+		camera.limit_bottom = map_h * 16
+		camera.zoom = Vector2(2, 2)  # Zoom out to see more
+		print("✓ Camera configured")
 	
 	# Save
 	var new_packed = PackedScene.new()
@@ -92,7 +111,6 @@ func build_island():
 	print("✓ Scene saved")
 
 func update_player():
-	# Simple colored player (guaranteed working, no external assets needed)
 	var code = '''extends CharacterBody2D
 
 @export var move_speed: float = 120.0
