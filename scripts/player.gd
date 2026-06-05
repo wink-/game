@@ -27,31 +27,51 @@ func get_global_tile_size() -> int:
 func setup_animations():
 	var frames = SpriteFrames.new()
 	
-	var colors = {
-		"down": Color.RED,
-		"up": Color.BLUE,
-		"left": Color.GREEN,
-		"right": Color.YELLOW
-	}
+	# Load real player textures
+	var south_tex = load("res://assets/sprites/player/e3399290/rotations/south.png")
+	var north_tex = load("res://assets/sprites/player/e3399290/rotations/north.png")
+	var east_tex = load("res://assets/sprites/player/e3399290/rotations/east.png")
+	var west_tex = load("res://assets/sprites/player/e3399290/rotations/west.png")
 	
-	for dir_name in ["down", "up", "left", "right"]:
-		var anim_name = "walk_" + dir_name
-		frames.add_animation(anim_name)
-		for i in range(4):
-			var img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
-			img.fill(colors[dir_name])
-			var tex = ImageTexture.create_from_image(img)
-			frames.add_frame(anim_name, tex)
-		frames.set_animation_loop(anim_name, true)
-		frames.set_animation_speed(anim_name, 8)
-		
-		anim_name = "idle_" + dir_name
-		frames.add_animation(anim_name)
-		var img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
-		img.fill(colors[dir_name])
-		var tex = ImageTexture.create_from_image(img)
-		frames.add_frame(anim_name, tex)
-		frames.set_animation_loop(anim_name, true)
+	# South (down)
+	frames.add_animation("walk_down")
+	frames.add_frame("walk_down", south_tex)
+	frames.set_animation_loop("walk_down", true)
+	frames.set_animation_speed("walk_down", 8)
+	
+	frames.add_animation("idle_down")
+	frames.add_frame("idle_down", south_tex)
+	frames.set_animation_loop("idle_down", true)
+	
+	# North (up)
+	frames.add_animation("walk_up")
+	frames.add_frame("walk_up", north_tex)
+	frames.set_animation_loop("walk_up", true)
+	frames.set_animation_speed("walk_up", 8)
+	
+	frames.add_animation("idle_up")
+	frames.add_frame("idle_up", north_tex)
+	frames.set_animation_loop("idle_up", true)
+	
+	# East (right)
+	frames.add_animation("walk_right")
+	frames.add_frame("walk_right", east_tex)
+	frames.set_animation_loop("walk_right", true)
+	frames.set_animation_speed("walk_right", 8)
+	
+	frames.add_animation("idle_right")
+	frames.add_frame("idle_right", east_tex)
+	frames.set_animation_loop("idle_right", true)
+	
+	# West (left)
+	frames.add_animation("walk_left")
+	frames.add_frame("walk_left", west_tex)
+	frames.set_animation_loop("walk_left", true)
+	frames.set_animation_speed("walk_left", 8)
+	
+	frames.add_animation("idle_left")
+	frames.add_frame("idle_left", west_tex)
+	frames.set_animation_loop("idle_left", true)
 	
 	animated_sprite.sprite_frames = frames
 
