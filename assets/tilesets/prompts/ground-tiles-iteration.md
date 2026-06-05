@@ -61,12 +61,104 @@
 
 ## Attempt 2
 
-**Date**: 
-**Prompt**:
+**Date**: 2026-06-05
+**Tool**: `create_topdown_tileset`
+**Parameters**:
+```json
+{
+  "lower_description": "dirt path, flat brown earth, minimal texture, clean pixel art",
+  "upper_description": "green grass field, flat turf, minimal texture, clean pixel art",
+  "transition_size": 0.0,
+  "tile_size": {"width": 16, "height": 16},
+  "outline": "selective outline",
+  "shading": "flat shading",
+  "detail": "low detail",
+  "view": "high top-down",
+  "tile_strength": 0.8,
+  "text_guidance_scale": 6
+}
+```
+
 **Output**:
+- Tileset ID: `0043ec18-d233-43f5-a18a-533b70f2a05b`
+- 16 tiles (64×64 PNG, 4×4 grid)
+- Style: selective outline, flat shading, low detail
+
+**Visual Evaluation**:
+| Criteria | Result |
+|----------|--------|
+| Dimensions | ✅ 16×16 tiles, 16 total |
+| Grass texture | ✅ Cleaner than Attempt 1 |
+| Dirt texture | ✅ Flatter than Attempt 1 |
+| Style | ⚠️ Added unwanted props (rocks, flowers) |
+
 **Issues**:
-**Adjustments**:
-**Status**: 
+1. **Unwanted props** — "low detail" caused AI to add small rocks on dirt and flower dots on grass instead of making truly flat terrain
+2. **Props won't tile seamlessly** — scattered rocks/flowers create visible repetition in large maps
+3. **Still not pure JRPG style** — needs to be cleaner, more uniform
+
+**Adjustments for Attempt 3**:
+- Explicitly forbid props: "no rocks, no flowers, no props, pure terrain only"
+- Try "single color outline" for stronger JRPG look
+- Increase `tile_strength` back to 1.0+ for consistency
+- Use "medium detail" but add "smooth, uniform surface"
+
+**Status**: NEEDS_RETOUCH — cleaner base but prop contamination makes it unsuitable.
+
+---
+
+## Attempt 3 ✅ ACCEPTED
+
+**Date**: 2026-06-05
+**Tool**: `create_topdown_tileset`
+**Parameters**:
+```json
+{
+  "lower_description": "dirt ground, smooth brown earth, no rocks, no props, pure terrain",
+  "upper_description": "green grass, smooth turf, no flowers, no props, pure terrain",
+  "transition_size": 0.0,
+  "tile_size": {"width": 16, "height": 16},
+  "outline": "single color outline",
+  "shading": "flat shading",
+  "detail": "medium detail",
+  "view": "high top-down",
+  "tile_strength": 1.2,
+  "text_guidance_scale": 8
+}
+```
+
+**Output**:
+- Tileset ID: `1b5029eb-ae23-4b59-989f-e6e2fbbd8cd5`
+- 16 tiles (64×64 PNG, 4×4 grid)
+- Style: single color outline, flat shading, medium detail
+- File: `assets/tilesets/generated/attempt3_grass_dirt.png`
+
+**Visual Evaluation**:
+| Criteria | Result |
+|----------|--------|
+| Dimensions | ✅ 16×16 tiles, 16 total |
+| Grass texture | ✅ Clean, flat, no props |
+| Dirt texture | ✅ Smooth, flat, no rocks |
+| Props | ✅ None — pure terrain only |
+| Outline | ✅ Visible single-color outline |
+| Style | ✅ Authentic JRPG look |
+| Seamless | ⚠️ Needs 3×3 grid test in Godot |
+
+**Comparison**:
+| | Attempt 1 | Attempt 2 | Attempt 3 |
+|--|-----------|-----------|-----------|
+| Grass | Noisy, gravel | Clean + flowers | ✅ Clean, flat |
+| Dirt | Patterned | Flat + rocks | ✅ Smooth, flat |
+| Props | None | Rocks + flowers | ✅ None |
+| Outline | Subtle | Subtle | ✅ Visible |
+
+**Key learnings**:
+1. **"No props" constraint works** — explicit negative prompts prevent AI from adding decorative elements
+2. **"Single color outline" > "selective outline"** — stronger, more authentic 16-bit look
+3. **"Medium detail" + "smooth" > "low detail"** — low detail caused prop contamination
+4. **Higher `tile_strength` (1.2)** — better consistency than 0.8
+
+**Status**: ✅ ACCEPTED — clean, authentic JRPG style. Ready for seamless tiling test.
 
 ---
 
@@ -74,12 +166,12 @@
 
 | Tile | File | Source Attempt | Notes |
 |------|------|----------------|-------|
-| Grass base | | | |
-| Dirt base | | | |
+| Grass base | | Attempt 3 | Curated from attempt3_grass_dirt.png |
+| Dirt base | | Attempt 3 | Curated from attempt3_grass_dirt.png |
 | Sand base | | | |
 | Shallow water | | | |
 | Deep water | | | |
-| Grass↔Dirt (16) | | | |
+| Grass↔Dirt (16) | | Attempt 3 | Complete Wang set |
 | Grass↔Sand (16) | | | |
 | Dirt↔Sand (16) | | | |
 | Grass↔Water (16) | | | |
