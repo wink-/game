@@ -1,0 +1,31 @@
+# Godot 4+ specific ignores
+.godot/
+*.tmp
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Build artifacts
+*.exe
+*.apk
+*.ipa
+*.x86_64
+*.dll
+*.so
+*.dylib
+
+# User-specific
+*.log
+
+# Pixellab generated (raw outputs, keep curated)
+assets/tilesets/generated/
+
+# Local opencode config (contains API keys)
+opencode.json
+.opencode/mcp.json

@@ -1,0 +1,62 @@
+[application]
+
+config/name="JRPG Island"
+config/icon="res://assets/icon.png"
+run/main_scene="res://scenes/main.tscn"
+
+[rendering]
+
+graphics/renderer/rendering_method="gl_compatibility"
+2d/default_pixel_snap=true
+2d/use_nvidia_rect_texture=true
+textures/canvas_textures/default_texture_filter=0
+textures/canvas_textures/default_texture_repeat=0
+
+[display]
+
+window/size/viewport_width=640
+window/size/viewport_height=480
+window/size/resizable=true
+window/mode/window_mode=0
+window/vsync/vsync_mode=1
+window/stretch/mode=2
+window/stretch/aspect=1
+
+[input]
+
+move_up={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"pressed":false,"keycode":87,"physical_keycode":87,"unicode":0,"echo":false,"ctrl_pressed":false,"alt_pressed":false,"shift_pressed":false,"meta_pressed":false)]
+}
+move_down={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"pressed":false,"keycode":83,"physical_keycode":83,"unicode":0,"echo":false,"ctrl_pressed":false,"alt_pressed":false,"shift_pressed":false,"meta_pressed":false)]
+}
+move_left={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"pressed":false,"keycode":65,"physical_keycode":65,"unicode":0,"echo":false,"ctrl_pressed":false,"alt_pressed":false,"shift_pressed":false,"meta_pressed":false)]
+}
+move_right={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"pressed":false,"keycode":68,"physical_keycode":68,"unicode":0,"echo":false,"ctrl_pressed":false,"alt_pressed":false,"shift_pressed":false,"meta_pressed":false)]
+}
+move_up_alt={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"pressed":false,"keycode":65362,"physical_keycode":65362,"unicode":0,"echo":false,"ctrl_pressed":false,"alt_pressed":false,"shift_pressed":false,"meta_pressed":false)]
+}
+move_down_alt={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"pressed":false,"keycode":65364,"physical_keycode":65364,"unicode":0,"echo":false,"ctrl_pressed":false,"alt_pressed":false,"shift_pressed":false,"meta_pressed":false)]
+}
+move_left_alt={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"pressed":false,"keycode":65361,"physical_keycode":65361,"unicode":0,"echo":false,"ctrl_pressed":false,"alt_pressed":false,"shift_pressed":false,"meta_pressed":false)]
+}
+move_right_alt={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"pressed":false,"keycode":65363,"physical_keycode":65363,"unicode":0,"echo":false,"ctrl_pressed":false,"alt_pressed":false,"shift_pressed":false,"meta_pressed":false)]
+}
+
+[autoload]
+
+Global="res://scripts/global.gd"
