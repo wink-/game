@@ -1,0 +1,32 @@
+{
+  "group_id": null,
+  "states": [
+    {
+      "character": {
+        "id": "22f59e29-2cc0-4381-b4ba-509600891ef3",
+        "name": "Elder",
+        "prompt": "old villager, white beard, brown robes, wise elder, top-down JRPG NPC, 16-bit pixel art, flat shading, single color outline, low detail",
+        "size": {
+          "width": 68,
+          "height": 68
+        },
+        "template_id": "mannequin",
+        "directions": 4,
+        "view": "low top-down",
+        "created_at": "2026-06-05T21:11:38.462383+00:00"
+      },
+      "folder": "22f59e29",
+      "frames": {
+        "rotations": {
+          "south": "22f59e29/rotations/south.png",
+          "west": "22f59e29/rotations/west.png",
+          "east": "22f59e29/rotations/east.png",
+          "north": "22f59e29/rotations/north.png"
+        },
+        "animations": {}
+      }
+    }
+  ],
+  "export_version": "3.0",
+  "export_date": "2026-06-05T21:14:47.076241"
+}
