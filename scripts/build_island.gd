@@ -146,6 +146,9 @@ func build_island():
 	# Place campfire in dirt center
 	place_prop_sprite(ysort, "res://assets/sprites/props/campfire.png", center_x, center_y, terrain_grid)
 	
+	# Add water collision - create StaticBody2D nodes for all water tiles
+	add_water_collision(main, terrain_grid)
+	
 	# Center player
 	var player = main.get_node("YSort/Player")
 	player.position = Vector2(center_x * 16, (center_y + 2) * 16)
@@ -389,6 +392,26 @@ func is_valid_prop_location(x: int, y: int, grid: Array, required_terrain: int) 
 			if grid[nx][ny] != required_terrain:
 				return false
 	return true
+
+func add_water_collision(main: Node, grid: Array):
+	# Create a StaticBody2D for water collision
+	var water_body = StaticBody2D.new()
+	water_body.name = "WaterCollision"
+	water_body.collision_layer = 2
+	water_body.collision_mask = 0
+	
+	for x in range(MAP_W):
+		for y in range(MAP_H):
+			if grid[x][y] == T_WATER:
+				var collision = CollisionShape2D.new()
+				var shape = RectangleShape2D.new()
+				shape.size = Vector2(16, 16)
+				collision.shape = shape
+				collision.position = Vector2(x * 16 + 8, y * 16 + 8)
+				water_body.add_child(collision)
+	
+	main.add_child(water_body)
+	print("✓ Water collision added")
 
 func place_prop_sprite(ysort: Node, texture_path: String, tx: float, ty: float, grid: Array):
 	var ix = int(tx)
