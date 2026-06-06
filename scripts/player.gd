@@ -22,18 +22,30 @@ func get_global_tile_size() -> int:
 
 func setup_sprites():
 	var frames = SpriteFrames.new()
-	var colors = {"down": Color.RED, "up": Color.BLUE, "left": Color.GREEN, "right": Color.YELLOW}
-	for d in colors:
-		var img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
-		img.fill(colors[d])
-		var tex = ImageTexture.create_from_image(img)
-		frames.add_animation("walk_" + d)
-		frames.add_frame("walk_" + d, tex)
-		frames.set_animation_loop("walk_" + d, true)
-		frames.set_animation_speed("walk_" + d, 8)
-		frames.add_animation("idle_" + d)
-		frames.add_frame("idle_" + d, tex)
-		frames.set_animation_loop("idle_" + d, true)
+	var dirs = {"down": "south", "up": "north", "right": "east", "left": "west"}
+	var colors = {"down": Color.RED, "up": Color.BLUE, "right": Color.YELLOW, "left": Color.GREEN}
+	for d in dirs:
+		var tex = load("res://assets/sprites/player/e3399290/rotations/" + dirs[d] + ".png")
+		if tex:
+			frames.add_animation("walk_" + d)
+			frames.add_frame("walk_" + d, tex)
+			frames.set_animation_loop("walk_" + d, true)
+			frames.set_animation_speed("walk_" + d, 8)
+			frames.add_animation("idle_" + d)
+			frames.add_frame("idle_" + d, tex)
+			frames.set_animation_loop("idle_" + d, true)
+		else:
+			# Fallback to colored squares
+			var img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
+			img.fill(colors[d])
+			var fallback_tex = ImageTexture.create_from_image(img)
+			frames.add_animation("walk_" + d)
+			frames.add_frame("walk_" + d, fallback_tex)
+			frames.set_animation_loop("walk_" + d, true)
+			frames.set_animation_speed("walk_" + d, 8)
+			frames.add_animation("idle_" + d)
+			frames.add_frame("idle_" + d, fallback_tex)
+			frames.set_animation_loop("idle_" + d, true)
 	sprite.sprite_frames = frames
 
 func setup_collision():
