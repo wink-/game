@@ -25,7 +25,8 @@ func setup_sprites():
 	var dirs = {"down": "south", "up": "north", "right": "east", "left": "west"}
 	var colors = {"down": Color.RED, "up": Color.BLUE, "right": Color.YELLOW, "left": Color.GREEN}
 	for d in dirs:
-		var tex = load("res://assets/sprites/player/e3399290/rotations/" + dirs[d] + ".png")
+		var img = Image.load_from_file("res://assets/sprites/player/e3399290/rotations/" + dirs[d] + ".png")
+		var tex = ImageTexture.create_from_image(img) if img else null
 		if tex:
 			frames.add_animation("walk_" + d)
 			frames.add_frame("walk_" + d, tex)
@@ -36,9 +37,9 @@ func setup_sprites():
 			frames.set_animation_loop("idle_" + d, true)
 		else:
 			# Fallback to colored squares
-			var img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
-			img.fill(colors[d])
-			var fallback_tex = ImageTexture.create_from_image(img)
+			var fallback_img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
+			fallback_img.fill(colors[d])
+			var fallback_tex = ImageTexture.create_from_image(fallback_img)
 			frames.add_animation("walk_" + d)
 			frames.add_frame("walk_" + d, fallback_tex)
 			frames.set_animation_loop("walk_" + d, true)
