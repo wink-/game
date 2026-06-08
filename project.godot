@@ -2,7 +2,7 @@
 
 config/name="JRPG Island"
 config/icon="res://assets/icon.png"
-run/main_scene="res://scenes/render_main.tscn"
+run/main_scene="res://scenes/main.tscn"
 
 [rendering]
 
