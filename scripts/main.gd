@@ -7,10 +7,20 @@ extends Node2D
 func _ready():
 	setup_tilemaps()
 	setup_camera_limits()
+	setup_dialogue()
 
 func setup_tilemaps():
 	ground_tilemap.z_index = 0
 	props_tilemap.z_index = 1
+
+func setup_dialogue():
+	var ui_layer = CanvasLayer.new()
+	ui_layer.name = "UI"
+	ui_layer.layer = 10
+	add_child(ui_layer)
+	var box = preload("res://scenes/dialogue_box.tscn").instantiate()
+	ui_layer.add_child(box)
+	player.dialogue_box = box
 
 func setup_camera_limits():
 	pass

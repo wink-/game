@@ -8,7 +8,7 @@ script = ExtResource("2_render")
 
 [node name="Main" parent="." instance=ExtResource("1_main")]
 
-[node name="OverrideCamera" type="Camera2D" parent="."]
-anchor_mode = 0
-offset = Vector2(240, 176)
+[node name="OverviewCamera" type="Camera2D" parent="."]
+anchor_mode = 1
+offset = Vector2(256, 192)
 zoom = Vector2(0.5, 0.5)

@@ -6,14 +6,15 @@ var tile_size: int = 16
 var target_position: Vector2
 var is_moving: bool = false
 var current_direction: Vector2i = Vector2i.DOWN
+var dialogue_box: Control = null
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var tilemap: TileMapLayer = get_node("../../Ground")
 
 func _ready():
 	target_position = global_position
 	tile_size = get_global_tile_size()
 	setup_sprites()
-	setup_collision()
 	sprite.play("idle_down")
 
 func get_global_tile_size() -> int:
@@ -23,47 +24,54 @@ func get_global_tile_size() -> int:
 func setup_sprites():
 	var frames = SpriteFrames.new()
 	var dirs = {"down": "south", "up": "north", "right": "east", "left": "west"}
-	var colors = {"down": Color.RED, "up": Color.BLUE, "right": Color.YELLOW, "left": Color.GREEN}
 	for d in dirs:
 		var img = Image.load_from_file("res://assets/sprites/player/e3399290/rotations/" + dirs[d] + ".png")
 		var tex = ImageTexture.create_from_image(img) if img else null
-		if tex:
-			frames.add_animation("walk_" + d)
-			frames.add_frame("walk_" + d, tex)
-			frames.set_animation_loop("walk_" + d, true)
-			frames.set_animation_speed("walk_" + d, 8)
-			frames.add_animation("idle_" + d)
-			frames.add_frame("idle_" + d, tex)
-			frames.set_animation_loop("idle_" + d, true)
-		else:
-			# Fallback to colored squares
-			var fallback_img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
-			fallback_img.fill(colors[d])
-			var fallback_tex = ImageTexture.create_from_image(fallback_img)
-			frames.add_animation("walk_" + d)
-			frames.add_frame("walk_" + d, fallback_tex)
-			frames.set_animation_loop("walk_" + d, true)
-			frames.set_animation_speed("walk_" + d, 8)
-			frames.add_animation("idle_" + d)
-			frames.add_frame("idle_" + d, fallback_tex)
-			frames.set_animation_loop("idle_" + d, true)
+		if not tex:
+			var fallback = Image.create(16, 16, false, Image.FORMAT_RGBA8)
+			fallback.fill(Color.RED if d == "down" else Color.BLUE if d == "up" else Color.GREEN if d == "left" else Color.YELLOW)
+			tex = ImageTexture.create_from_image(fallback)
+		frames.add_animation("walk_" + d)
+		frames.add_frame("walk_" + d, tex)
+		frames.set_animation_loop("walk_" + d, true)
+		frames.set_animation_speed("walk_" + d, 8)
+		frames.add_animation("idle_" + d)
+		frames.add_frame("idle_" + d, tex)
+		frames.set_animation_loop("idle_" + d, true)
 	sprite.sprite_frames = frames
 
-func setup_collision():
-	var c = CollisionShape2D.new()
-	c.name = "CollisionShape2D"
-	var s = RectangleShape2D.new()
-	s.size = Vector2(14, 10)
-	c.shape = s
-	c.position = Vector2(0, 3)
-	add_child(c)
-	move_child(c, 1)
-
 func _physics_process(delta: float):
+	if dialogue_box and dialogue_box.is_active():
+		return
 	if not is_moving:
 		handle_input()
 	else:
 		move_towards_target(delta)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("interact"):
+		try_interact()
+
+func try_interact() -> void:
+	if dialogue_box and dialogue_box.is_active():
+		return
+	if is_moving:
+		return
+	var target_pos = global_position + Vector2(current_direction.x, current_direction.y) * tile_size
+	var target_cell = Vector2i(floori(target_pos.x / tile_size), floori(target_pos.y / tile_size))
+	var parent_node = get_parent()
+	if not parent_node:
+		return
+	for sibling in parent_node.get_children():
+		if sibling == self or sibling == dialogue_box:
+			continue
+		if sibling.has_method("interact") and sibling.has_method("get_dialogue"):
+			var cell = Vector2i(floori(sibling.position.x / tile_size), floori(sibling.position.y / tile_size))
+			if cell == target_cell:
+				sibling.interact(self)
+				get_viewport().set_input_as_handled()
+				dialogue_box.start(sibling.get_display_name(), sibling.get_dialogue())
+				return
 
 func handle_input():
 	var input_dir = Vector2i.ZERO
@@ -89,12 +97,12 @@ func start_move(dir: Vector2i):
 		update_animation(dir, true)
 
 func can_move_to(pos: Vector2) -> bool:
-	var ss = get_world_2d().direct_space_state
-	var q = PhysicsPointQueryParameters2D.new()
-	q.position = pos
-	q.collision_mask = 2
-	q.collide_with_areas = true
-	return ss.intersect_point(q).size() == 0
+	# Check if target is water using tilemap
+	if tilemap:
+		var cell = tilemap.get_cell_source_id(tilemap.local_to_map(pos))
+		if cell == 0:  # Water source ID
+			return false
+	return true
 
 func move_towards_target(delta: float):
 	var direction = (target_position - global_position).normalized()
@@ -113,7 +121,7 @@ func update_animation(dir: Vector2i, moving: bool):
 	elif dir == Vector2i.DOWN: anim_name = anim_prefix + "down"
 	elif dir == Vector2i.LEFT: anim_name = anim_prefix + "left"
 	elif dir == Vector2i.RIGHT: anim_name = anim_prefix + "right"
-	if sprite.sprite_frames.has_animation(anim_name):
+	if sprite.sprite_frames and sprite.sprite_frames.has_animation(anim_name):
 		sprite.play(anim_name)
 
 func snap_to_grid(pos: Vector2) -> Vector2:

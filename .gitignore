@@ -1,6 +1,10 @@
 # Godot 4+ specific ignores
 .godot/
 *.tmp
+# Godot import/uid artifacts are regenerated locally; not needed since assets
+# are loaded at runtime via Image.load_from_file() rather than as imported resources.
+*.import
+*.uid
 
 # OS-specific
 .DS_Store
