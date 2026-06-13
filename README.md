@@ -1,9 +1,10 @@
 # JRPG Island
 
-A small top-down JRPG-style island prototype built in **Godot 4.6** (Compatibility
-renderer, 640x480 viewport, pixel-art at 16px tiles). Walk around a circular
-island, talk to an NPC, read signposts, and open a chest — the beginnings of an
-interactive JRPG.
+A top-down JRPG-style island prototype built in **Godot 4.6** (Compatibility
+renderer, **1280x720** viewport, pixel-art at 16px tiles). Explore a sizeable
+island — forests, a village, winding roads and beaches — talk to an NPC, read
+signposts, and open a chest. The camera follows the hero in a close,
+Dragon-Warrior/FF-style view.
 
 ## Running the game
 

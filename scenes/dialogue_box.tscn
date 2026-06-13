@@ -26,10 +26,10 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = -120.0
-offset_right = -12.0
-offset_bottom = -12.0
+offset_left = 16.0
+offset_top = -200.0
+offset_right = -16.0
+offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/panel = SubResource("sb")
@@ -47,15 +47,16 @@ grow_vertical = 2
 theme_override_constants/separation = 6
 
 [node name="NameLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 18)
+custom_minimum_size = Vector2(0, 30)
 text = "Speaker"
 theme_override_colors/font_color = Color(1, 0.92, 0.55, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 26
 
 [node name="BodyLabel" type="RichTextLabel" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 56)
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 3
 text = "Dialogue text..."
 bbcode_enabled = true
@@ -63,11 +64,13 @@ fit_content = false
 scroll_active = false
 theme_override_colors/default_color = Color(0.95, 0.95, 0.95, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/normal_font_size = 22
 
 [node name="HintLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 14)
+custom_minimum_size = Vector2(0, 22)
 text = "▼"
 horizontal_alignment = 2
 theme_override_colors/font_color = Color(1, 0.92, 0.55, 1)
+theme_override_font_sizes/font_size = 20

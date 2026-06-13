@@ -24,7 +24,7 @@ godot --headless --script scripts/build_island.gd
 ## Render a screenshot (verifies visuals)
 Headless mode cannot capture viewports; use a virtual display:
 ```bash
-xvfb-run -a -s "-screen 0 640x480x24" godot res://scenes/render_test.tscn
+xvfb-run -a -s "-screen 0 1280x720x24" godot res://scenes/render_test.tscn
 ```
 
 ## Conventions

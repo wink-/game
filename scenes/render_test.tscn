@@ -10,5 +10,5 @@ script = ExtResource("2_render")
 
 [node name="OverviewCamera" type="Camera2D" parent="."]
 anchor_mode = 1
-offset = Vector2(256, 192)
-zoom = Vector2(0.5, 0.5)
+offset = Vector2(768, 576)
+zoom = Vector2(0.625, 0.625)

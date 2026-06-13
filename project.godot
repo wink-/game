@@ -7,6 +7,7 @@ run/main_scene="res://scenes/main.tscn"
 [rendering]
 
 graphics/renderer/rendering_method="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.14, 0.34, 0.74, 1)
 2d/default_pixel_snap=true
 2d/use_nvidia_rect_texture=true
 textures/canvas_textures/default_texture_filter=0
@@ -14,8 +15,8 @@ textures/canvas_textures/default_texture_repeat=0
 
 [display]
 
-window/size/viewport_width=640
-window/size/viewport_height=480
+window/size/viewport_width=1280
+window/size/viewport_height=720
 window/size/resizable=true
 window/mode/window_mode=0
 window/vsync/vsync_mode=1
